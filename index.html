@@ -467,7 +467,7 @@
         fadePlane.style.backgroundColor = "#ffffff";
         fadePlane.style.opacity = "0";
         fadePlane.style.pointerEvents = "none";
-        fadePlane.style.zIndex = "2";
+        fadePlane.style.zIndex = "1";
         overlay.appendChild(fadePlane);
 
         var cells = [];
@@ -557,9 +557,69 @@
         overlay.style.backgroundColor = "#ffffff";
         center.style.color = "#000000";
         center.textContent = "";
-        await rafSleep(reduceMotion ? 200 : 450);
 
-        // Redirect
+        // CRITICAL: Hide the grid elements completely
+        gridWrap.style.display = "none";
+        table.style.display = "none";
+        center.style.display = "none";
+        fadePlane.style.display = "none";
+
+        // Display post-spin message with color-cycling "cursor"
+        var msg = document.createElement("div");
+        msg.style.position = "fixed";
+        msg.style.left = "50%";
+        msg.style.top = "50%";
+        msg.style.transform = "translate(-50%, -50%)";
+        msg.style.fontFamily = "Courier New, monospace";
+        msg.style.fontSize = "clamp(18px, 4.5vw, 36px)";
+        msg.style.color = "#000000";
+        msg.style.opacity = "0";
+        msg.style.whiteSpace = "pre";
+        msg.style.zIndex = "10000";
+        msg.style.fontWeight = "600";
+        msg.style.textAlign = "center";
+
+        var before = document.createTextNode("Now your ");
+        var colorSpan = document.createElement("span");
+        colorSpan.textContent = "cursor";
+        var after = document.createTextNode(" holds colors");
+        msg.appendChild(before);
+        msg.appendChild(colorSpan);
+        msg.appendChild(after);
+        overlay.appendChild(msg);
+
+        var cyclePalette = ["#ff0000", "#ff7f00", "#ffff00", "#00ff00", "#00ffff", "#0000ff", "#4b0082", "#8f00ff", "#ff1493", "#000000"];
+
+        var totalMs = 2500; // 2.5s total
+        var fadeInMs = 400;
+        var fadeOutMs = 400;
+
+        // Ensure element is rendered before transition
+        await rafSleep(100);
+
+        // Simple fade in/out using timeouts to ensure timing is honored
+        msg.style.transition = "opacity " + fadeInMs + "ms ease";
+        // force reflow then fade in
+        void msg.offsetHeight;
+        msg.style.opacity = "1";
+
+        // Start color cycling interval (~100ms per color change)
+        var colorStepMs = 100;
+        var cycleIdx = 0;
+        var colorTimer = setInterval(function () {
+          colorSpan.style.color = cyclePalette[cycleIdx % cyclePalette.length];
+          cycleIdx++;
+        }, colorStepMs);
+
+        // Schedule fade out near the end
+        setTimeout(function () {
+          msg.style.transition = "opacity " + fadeOutMs + "ms ease";
+          msg.style.opacity = "0";
+        }, totalMs - fadeOutMs);
+
+        // Wait full duration, then cleanup and redirect
+        await rafSleep(totalMs);
+        clearInterval(colorTimer);
         window.location.href = "https://www.anshkumartripathi.space";
       }
     })();
