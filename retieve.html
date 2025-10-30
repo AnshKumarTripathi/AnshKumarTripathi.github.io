@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+
+
+<div class="container">
+  <section id="projects">
+    <h2>Projects</h2>
+    <div id="projectsGrid" class="projects-grid">
+      <!-- Project cards will be injected here -->
+    </div>
+    <p id="loadingMessage" style="text-align: center; margin-top: 2rem;">Loading projects...</p>
+  </section>
+</div>
+
+<footer>
+  <p>&copy; 2023 My Projects. All rights reserved.</p>
+</footer>
+
+<script>
+  // Replace with your GitHub username
+  const githubUsername = "anshkumartripathi";
+
+  const projectsGrid = document.getElementById("projectsGrid");
+  const loadingMessage = document.getElementById("loadingMessage");
+
+  // Fetch repositories from GitHub API
+  async function fetchProjects() {
+    try {
+      const response = await fetch(`https://api.github.com/users/${githubUsername}/repos?sort=updated`);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const repos = await response.json();
+      displayProjects(repos);
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      loadingMessage.textContent = "Failed to load projects.";
+    }
+  }
+
+  // Display project cards
+  function displayProjects(repos) {
+    // Clear loading message
+    loadingMessage.style.display = "none";
+
+    // Optionally filter projects (if you want to showcase specific ones, e.g., exclude forks)
+    const filteredRepos = repos.filter((repo) => !repo.fork);
+
+    if (filteredRepos.length === 0) {
+      projectsGrid.innerHTML = "<p>No projects found.</p>";
+      return;
+    }
+
+    filteredRepos.forEach((repo) => {
+      const card = document.createElement("div");
+      card.className = "project-card";
+
+      const cardContent = document.createElement("div");
+      cardContent.className = "project-content";
+
+      const title = document.createElement("h3");
+      title.className = "project-title";
+      title.textContent = repo.name;
+
+      const description = document.createElement("p");
+      description.className = "project-description";
+      description.textContent = repo.description ? repo.description : "No description provided.";
+
+      const link = document.createElement("a");
+      link.className = "project-link";
+      link.href = repo.html_url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = "View on GitHub";
+
+      cardContent.appendChild(title);
+      cardContent.appendChild(description);
+      cardContent.appendChild(link);
+      card.appendChild(cardContent);
+      projectsGrid.appendChild(card);
+    });
+  }
+
+  // Initialize
+  fetchProjects();
+</script>
+
+</html>
