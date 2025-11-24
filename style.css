@@ -1,89 +1,4 @@
-/* Intentionally broken/retro initial styles */
-body {
-  font-family: "Comic Sans MS", "Comic Sans", cursive, serif !important;
-  background-color: #ffffff;
-  color: #000000;
-  margin: 10px;
-  line-height: 1.4;
-  background-image: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
-}
-
-h1,
-h2,
-h3 {
-  font-size: 200% !important;
-  text-align: center;
-  font-weight: bold;
-  color: #000000;
-  margin: 5px;
-}
-
-p {
-  margin: 3px;
-  text-indent: 20px;
-}
-
-a {
-  color: #333333;
-  text-decoration: underline;
-}
-
-a:visited {
-  color: #666666;
-}
-
-button {
-  font-family: "Comic Sans MS", "Comic Sans", cursive !important;
-  font-size: 14px !important;
-  background: #f5f5f5;
-  border: 3px outset #cccccc;
-  padding: 8px 16px;
-  cursor: pointer;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: #000000;
-}
-
-button:active {
-  border: 3px inset #cccccc;
-}
-
-hr {
-  border: 2px solid #000000;
-  margin: 20px 0;
-}
-
-ul {
-  margin-left: 40px;
-}
-
-li {
-  margin: 2px 0;
-}
-
-/* Broken layout */
-main {
-  margin-left: 50px;
-  margin-right: 30px;
-  position: relative;
-}
-
-strong {
-  font-weight: bold;
-  text-decoration: underline;
-}
-
-.visitor-counter {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  font-size: 10px;
-  color: #000000;
-  background: #f5f5f5;
-  padding: 5px;
-  border: 2px solid #000000;
-  z-index: 999;
-}
+/* Effect-only styles injected after an interaction starts */
 
 .loading-spinner {
   display: inline-block;
@@ -101,26 +16,6 @@ strong {
   }
 }
 
-.under-construction {
-  text-align: center;
-  font-size: 24px;
-  color: #000000;
-  background: #f5f5f5;
-  padding: 10px;
-  margin: 10px 0;
-  border: 3px dashed #000000;
-}
-
-.testimonial {
-  font-family: "Comic Sans MS", cursive;
-  font-size: 12px;
-  color: #000000;
-  background: #f5f5f5;
-  padding: 5px;
-  margin: 5px 0;
-  border-left: 5px solid #666666;
-}
-
 @keyframes shake {
   0%,
   100% {
@@ -134,7 +29,6 @@ strong {
   }
 }
 
-/* Blackhole animations */
 @keyframes blackholeSpawn {
   0% {
     transform: translate(-50%, -50%) scale(0);
@@ -143,39 +37,6 @@ strong {
   100% {
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
-  }
-}
-
-@keyframes blackholeSpin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes explosionFlash {
-  0% {
-    background-color: rgba(255, 255, 255, 0);
-  }
-  30% {
-    background-color: rgba(255, 255, 255, 1);
-  }
-  60% {
-    background-color: rgba(255, 100, 0, 1);
-  }
-  100% {
-    background-color: rgba(0, 0, 0, 1);
-  }
-}
-
-@keyframes shrink {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(0);
   }
 }
 
@@ -208,48 +69,3 @@ strong {
   }
 }
 
-@keyframes explosionExpand {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    background-color: rgba(255, 255, 255, 1);
-    opacity: 1;
-    border-radius: 50%;
-  }
-  15% {
-    background-color: rgba(255, 255, 255, 1);
-    opacity: 1;
-  }
-  30% {
-    background-color: rgba(255, 200, 100, 1);
-    opacity: 0.98;
-  }
-  50% {
-    background-color: rgba(255, 150, 0, 1);
-    opacity: 0.95;
-  }
-  70% {
-    background-color: rgba(255, 100, 0, 1);
-    opacity: 0.9;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(50);
-    background-color: rgba(255, 50, 0, 0.8);
-    opacity: 0.85;
-    border-radius: 50%;
-  }
-}
-
-@keyframes voidExpand {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    background-color: rgba(0, 0, 0, 1);
-    opacity: 1;
-    border-radius: 50%;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(50);
-    background-color: rgba(0, 0, 0, 1);
-    opacity: 1;
-    border-radius: 50%;
-  }
-}

@@ -1,6 +1,19 @@
 (function () {
   "use strict";
 
+  var effectStylesLoaded = false;
+
+  function ensureEffectStyles() {
+    if (effectStylesLoaded) return;
+    effectStylesLoaded = true;
+    var head = document.head || document.getElementsByTagName("head")[0];
+    if (!head) return;
+    var link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "style.css";
+    head.appendChild(link);
+  }
+
   // Easter egg: Console messages
   console.log("%cHold up!", "color: red; font-size: 20px; font-weight: bold;");
   console.log(
@@ -66,6 +79,7 @@
       clickCount++;
       if (clickCount === 1) {
         addBtn.removeEventListener("click", handleClick);
+        ensureEffectStyles();
         startAnimation();
       } else if (clickCount === 2) {
         console.log("Haha, nice try! Already processing...");
@@ -92,6 +106,7 @@
     // Trigger blackhole on third click
     if (globalClickCount === 3 && !blackholeActive) {
       blackholeActive = true;
+      ensureEffectStyles();
       startBlackholeEffect();
     }
   });
@@ -286,6 +301,7 @@
 
   // Main blackhole effect
   async function startBlackholeEffect() {
+    ensureEffectStyles();
     var reduceMotion = false;
     try {
       reduceMotion =
@@ -340,6 +356,8 @@
     var initialRadius = 30;
     blackhole.style.width = initialRadius * 2 + "px";
     blackhole.style.height = initialRadius * 2 + "px";
+    blackhole.style.transition =
+      "width 0.6s cubic-bezier(0.4, 0, 0.2, 1), height 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
     blackhole.style.animation = "blackholeSpawn 0.3s ease-out forwards";
     await rafSleep(300);
 
@@ -366,7 +384,7 @@
       window.innerWidth * window.innerWidth +
         window.innerHeight * window.innerHeight
     );
-    var maxRadius = Math.max(maxDimension * 0.8, diagonal * 0.65); // At least 60% of largest dimension or 35% of diagonal
+    var maxRadius = diagonal * 1.4; // Grow far beyond viewport to ensure everything is consumed
 
     // Phase 2: Text consumption - Section-wise (top and bottom sections simultaneously)
     var consuming = false;
@@ -424,9 +442,12 @@
         var baseDuration = acceleration < 0.8 ? 1000 : 500; // Faster near the end
         var duration =
           baseDuration * (1 - acceleration * 0.5) * (1 - sizeFactor * 0.6); // Up to 60% faster with larger size
+        if (currentRadius >= maxRadius * 0.98) {
+          duration = Math.max(120, duration / 5);
+        }
 
         var promises = [];
-        var sectionGrowth = 0;
+        var consumedThisBatch = 0;
 
         // Process top section element
         if (topSection.length > 0) {
@@ -440,8 +461,8 @@
               duration
             )
           );
-          sectionGrowth += 6 + Math.random() * 2;
           consumedCount++;
+          consumedThisBatch++;
         }
 
         // Process bottom section element
@@ -456,20 +477,20 @@
               duration
             )
           );
-          sectionGrowth += 6 + Math.random() * 2;
           consumedCount++;
+          consumedThisBatch++;
         }
 
-        // Grow blackhole based on consumed elements
-        var targetRadius = currentRadius + sectionGrowth;
-        if (targetRadius > maxRadius) targetRadius = maxRadius;
-
-        // Smoothly animate blackhole size growth using CSS transition
-        blackhole.style.transition =
-          "width 0.3s ease-out, height 0.3s ease-out";
-        currentRadius = targetRadius; // Update immediately for calculations
-        blackhole.style.width = currentRadius * 2 + "px";
-        blackhole.style.height = currentRadius * 2 + "px";
+        // Grow blackhole continuously based on progress
+        var progress =
+          Math.min(1, consumedCount / Math.max(1, textElements.length));
+        var targetRadius =
+          initialRadius + progress * (maxRadius - initialRadius);
+        if (targetRadius > currentRadius) {
+          currentRadius = targetRadius;
+          blackhole.style.width = currentRadius * 2 + "px";
+          blackhole.style.height = currentRadius * 2 + "px";
+        }
 
         // Wait for batch to complete
         Promise.all(promises).then(function () {
@@ -482,6 +503,13 @@
         });
       } else if (consumedCount >= textElements.length) {
         clearInterval(consumptionInterval);
+      } else {
+        // Passive growth so the blackhole keeps expanding even between batches
+        if (currentRadius < maxRadius) {
+          currentRadius = Math.min(maxRadius, currentRadius + 8);
+          blackhole.style.width = currentRadius * 2 + "px";
+          blackhole.style.height = currentRadius * 2 + "px";
+        }
       }
     }, 50);
 
